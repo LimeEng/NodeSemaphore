@@ -67,6 +67,27 @@ describe('semaphore', function () {
     const result = results.every(item => item === testValue)
     assert(result)
   })
+
+  it('should throw error with non-function arguments', async function () {
+    async function shouldThrow(semaphore, argument) {
+      try {
+        await semaphore.lock(argument)
+        return false
+      } catch (err) {
+        return true
+      }
+    }
+    const sem = new Semaphore(2)
+
+    assert.ok(shouldThrow(sem, 'Hello World!'))
+    assert.ok(shouldThrow(sem, 10))
+    assert.ok(shouldThrow(sem, 0))
+    assert.ok(shouldThrow(sem, []))
+    assert.ok(shouldThrow(sem, [1, 2, 3]))
+    assert.ok(shouldThrow(sem, {}))
+    assert.ok(shouldThrow(sem, { prop: 'Hello there!' }))
+    assert.ok(sem.lock(() => 1 + 1))
+  })
 })
 
 function array(bound) {
