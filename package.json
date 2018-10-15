@@ -1,12 +1,19 @@
 {
   "name": "semaphore",
   "version": "0.3.0",
-  "description": "",
+  "description": "Semaphores, with promises. Limit access to resources in a safe and easy manner",
   "main": "index.js",
+  "keywords": [
+    "semaphore",
+    "promise",
+    "async",
+    "concurrent",
+    "concurrency"
+  ],
   "scripts": {
     "test": "mocha"
   },
-  "author": "",
+  "author": "Emil Englesson",
   "license": "MIT",
   "devDependencies": {
     "mocha": "^5.2.0"
