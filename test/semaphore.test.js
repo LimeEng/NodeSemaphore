@@ -45,11 +45,11 @@ describe('semaphore', function () {
     const r3 = sem.lock(() => task(true))
 
     r1.then(() => assert.fail())
-      .catch(() => assert.ok())
-    r2.then(() => assert.ok())
+      .catch(() => {/* Success!*/ })
+    r2.then(() => {/* Success!*/ })
       .catch(() => assert.fail())
     r3.then(() => assert.fail())
-      .catch(() => assert.ok())
+      .catch(() => {/* Success!*/ })
   })
 
   it('should return value from thunk', async function () {
