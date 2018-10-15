@@ -1,11 +1,11 @@
 {
   "name": "@limeeng/semaphore",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Semaphores, with promises. Limit access to resources in a safe and easy manner",
   "main": "index.js",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/LimeEng/NodeSemaphore.git"
+    "type": "git",
+    "url": "https://github.com/LimeEng/NodeSemaphore.git"
   },
   "keywords": [
     "semaphore",
