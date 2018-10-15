@@ -4,6 +4,32 @@ const assert = require('assert').strict
 const Semaphore = require('../lib/semaphore.js')
 
 describe('Semaphore', function () {
+  describe('constructor', function () {
+    it('should throw error if count is not an integer > 0', function () {
+      function shouldThrow(argument) {
+        try {
+          new Semaphore(argument)
+          return false
+        } catch (err) {
+          return true
+        }
+      }
+      assert.ok(shouldThrow('Hello World!'))
+      assert.ok(shouldThrow(''))
+      assert.ok(shouldThrow(0))
+      assert.ok(shouldThrow(-1))
+      assert.ok(shouldThrow(3.1))
+      assert.ok(shouldThrow(Number.NaN))
+      assert.ok(shouldThrow(Number.POSITIVE_INFINITY))
+      assert.ok(shouldThrow(Number.NEGATIVE_INFINITY))
+      assert.ok(shouldThrow([]))
+      assert.ok(shouldThrow([1]))
+      assert.ok(shouldThrow([1, 2, 3]))
+      assert.ok(shouldThrow({}))
+      assert.ok(shouldThrow({ prop: 'Hello there!' }))
+      assert.ok(shouldThrow({ 1: 2 }))
+    })
+  })
   describe('.lock(thunk)', function () {
     it('should limit concurrent actions', async function () {
       const sem = new Semaphore(2)
