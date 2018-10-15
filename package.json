@@ -1,5 +1,5 @@
 {
-  "name": "semaphore",
+  "name": "@limeeng/semaphore",
   "version": "0.3.0",
   "description": "Semaphores, with promises. Limit access to resources in a safe and easy manner",
   "main": "index.js",
