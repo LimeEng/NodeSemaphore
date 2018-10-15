@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type" : "git",
-    "url" : "https://github.com/LimeEng/NodeSemaphore"
+    "url" : "https://github.com/LimeEng/NodeSemaphore.git"
   },
   "keywords": [
     "semaphore",
