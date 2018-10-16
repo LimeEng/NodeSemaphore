@@ -14,6 +14,9 @@ describe('Semaphore', function () {
           return true
         }
       }
+      for (let i = -100; i <= 0; i++) {
+        assert.ok(shouldThrow(i))
+      }
       assert.ok(shouldThrow('Hello World!'))
       assert.ok(shouldThrow(''))
       assert.ok(shouldThrow(0))
@@ -28,6 +31,20 @@ describe('Semaphore', function () {
       assert.ok(shouldThrow({}))
       assert.ok(shouldThrow({ prop: 'Hello there!' }))
       assert.ok(shouldThrow({ 1: 2 }))
+    })
+    it('should not throw an error if count is an integer > 0', function () {
+      function shouldNotThrow(argument) {
+        try {
+          new Semaphore(argument)
+          return true
+        } catch (err) {
+          return false
+        }
+      }
+      for (let i = 1; i <= 100; i++) {
+        assert.ok(shouldNotThrow(i))
+      }
+      assert.ok(shouldNotThrow(Number.MAX_SAFE_INTEGER))
     })
   })
   describe('.lock(thunk)', function () {
