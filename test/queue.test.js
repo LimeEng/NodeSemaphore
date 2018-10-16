@@ -30,10 +30,13 @@ describe('Queue', function () {
     })
     it('should throw an error if offered null', function () {
       const queue = new Queue()
+      let errorThrown = false
       try {
         queue.offer(null)
-        assert.fail()
-      } catch (err) { }
+      } catch (err) {
+        errorThrown = true
+      }
+      assert.deepEqual(true, errorThrown)
     })
   })
   describe('.poll()', function () {
