@@ -36,6 +36,17 @@ describe('Queue', function () {
       }
       assert.deepEqual(true, errorThrown)
     })
+    it('should add items in the correct order', function () {
+      const queue = new Queue()
+      const data = array(10)
+      queue.offer(...data)
+      assert.deepEqual(10, queue.size)
+      assert.deepEqual(false, queue.isEmpty)
+
+      const polled = data.map(item => queue.poll())
+
+      assert.deepEqual(data, polled)
+    })
   })
   describe('.offer(value)', function () {
     it('should update size and isEmpty', function () {
@@ -125,3 +136,7 @@ describe('Queue', function () {
     })
   })
 })
+
+function array(bound) {
+  return [...Array(bound).keys()]
+}
