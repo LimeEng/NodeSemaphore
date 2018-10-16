@@ -4,7 +4,7 @@ const assert = require('assert').strict
 const utility = require('../lib/utility.js')
 
 describe('Utility', function () {
-  describe('isFunction(value)', function () {
+  describe('.isFunction(value)', function () {
     const isFunction = utility.isFunction
     it('should correctly detect functions', function () {
       assert.ok(isFunction(function named() { }))
@@ -31,7 +31,7 @@ describe('Utility', function () {
       assert.ok(!isFunction({ prop: 'Hello World!' }))
     })
   })
-  describe('isInteger(value)', function () {
+  describe('.isInteger(value)', function () {
     const isInteger = utility.isInteger
     it('should correctly detect integers', function () {
       for (let i = -100; i <= 100; i++) {
@@ -56,7 +56,7 @@ describe('Utility', function () {
       assert.ok(!isInteger(() => { 1 + 1 }))
     })
   })
-  describe('isStrictPositiveInteger(value)', function () {
+  describe('.isStrictPositiveInteger(value)', function () {
     const isStrictPositiveInteger = utility.isStrictPositiveInteger
     it('should correctly detect strictly positive integers (> 0)', function () {
       for (let i = 1; i <= 100; i++) {
