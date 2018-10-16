@@ -11,6 +11,43 @@ describe('Queue', function () {
       assert.deepEqual(true, queue.isEmpty)
     })
   })
+  describe('.offer(...values)', function () {
+    it('should update size and isEmpty', function () {
+      const queue = new Queue()
+      queue.offer(1, 2, 3, 4, 5)
+      assert.deepEqual(5, queue.size)
+      assert.deepEqual(false, queue.isEmpty)
+    })
+    it('should not break down arrays', function () {
+      const queue = new Queue()
+      const data = [1, 2, 3]
+      queue.offer(data, 4, 5, 6)
+      assert.deepEqual(4, queue.size)
+      assert.deepEqual(false, queue.isEmpty)
+      assert.deepEqual(data, queue.peek())
+    })
+    it('should throw an error if offered null', function () {
+      const queue = new Queue()
+      let errorThrown = false
+      try {
+        queue.offer(1, 2, 3, null, 4, 5, 6)
+      } catch (err) {
+        errorThrown = true
+      }
+      assert.deepEqual(true, errorThrown)
+    })
+    it('should add items in the correct order', function () {
+      const queue = new Queue()
+      const data = array(10)
+      queue.offer(...data)
+      assert.deepEqual(10, queue.size)
+      assert.deepEqual(false, queue.isEmpty)
+
+      const polled = data.map(item => queue.poll())
+
+      assert.deepEqual(data, polled)
+    })
+  })
   describe('.offer(value)', function () {
     it('should update size and isEmpty', function () {
       const queue = new Queue()
@@ -99,3 +136,7 @@ describe('Queue', function () {
     })
   })
 })
+
+function array(bound) {
+  return [...Array(bound).keys()]
+}
