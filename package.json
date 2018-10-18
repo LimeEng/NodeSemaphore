@@ -1,6 +1,6 @@
 {
   "name": "@limeeng/semaphore",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "description": "Semaphores, with promises. Limit access to resources in a safe and easy manner",
   "main": "index.js",
   "repository": {
@@ -20,6 +20,7 @@
   "author": "Emil Englesson",
   "license": "MIT",
   "devDependencies": {
+    "benchmark": "^2.1.4",
     "mocha": "^5.2.0"
   }
 }
