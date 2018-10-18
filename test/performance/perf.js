@@ -45,6 +45,7 @@ function generateTestCase(semLimit, taskCount) {
     return [...Array(bound).keys()]
   }
   function setup() {
+    // Why globals? See end of file
     global.sem = new Semaphore(semLimit)
     global.promises = array(taskCount).map(() => () => new Promise((resolve, reject) => process.nextTick(resolve)))
   }
@@ -60,3 +61,34 @@ function generateTestCase(semLimit, taskCount) {
     name: 'Semaphore(' + semLimit + ') -> ' + taskCount + ' promises'
   }
 }
+
+// SOURCE: https://github.com/bestiejs/benchmark.js/issues/51
+
+// This is because when you pass a function to benchmark.js it will attempt to decompile it and reconstruct it in a test loop.
+//
+// .add('create graph', function() {
+//     schedule.dependencyGraph(tasks);
+// },
+// {
+//     'setup': function() {
+//         var tasks = ['A', 'B', 'C', 'D', 'E'];
+//     }
+// })
+// becomes:
+//
+// var tasks = ['A', 'B', 'C', 'D', 'E'];
+//
+// while (....) {
+//   schedule.dependencyGraph(tasks);
+// }
+// This would be great, however functions compiled in Node don't have access to variables your modules scope. So it can't access schedule and so throws and error and attempts to fallback to the non-compiled approach which then turns your code into:
+//
+// this.setup();
+// while (....) {
+//   schedule.dependencyGraph(tasks);
+// }
+// and now the test doesn't have access to tasks and throws an error.
+//
+// To avoid this define schedule on the global object like:
+//
+// global.schedule = require('../index');
