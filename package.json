@@ -15,6 +15,7 @@
     "concurrency"
   ],
   "scripts": {
+    "perf": "node ./test/performance/perf.js",
     "test": "mocha"
   },
   "author": "Emil Englesson",
