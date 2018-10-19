@@ -13,6 +13,7 @@ describe('Utility', function () {
       assert.ok(isFunction(String))
       assert.ok(isFunction(Object))
     })
+
     it('should correctly return false', function () {
       assert.ok(!isFunction(undefined))
       assert.ok(!isFunction(null))
@@ -31,6 +32,7 @@ describe('Utility', function () {
       assert.ok(!isFunction({ prop: 'Hello World!' }))
     })
   })
+
   describe('.isInteger(value)', function () {
     const isInteger = utility.isInteger
     it('should correctly detect integers', function () {
@@ -40,6 +42,7 @@ describe('Utility', function () {
       assert.ok(isInteger(Number.MAX_SAFE_INTEGER))
       assert.ok(isInteger(Number.MIN_SAFE_INTEGER))
     })
+
     it('should correctly return false', function () {
       assert.ok(!isInteger(0.9999999999999))
       assert.ok(!isInteger(0.0000000000001))
@@ -56,6 +59,7 @@ describe('Utility', function () {
       assert.ok(!isInteger(() => { 1 + 1 }))
     })
   })
+
   describe('.isStrictPositiveInteger(value)', function () {
     const isStrictPositiveInteger = utility.isStrictPositiveInteger
     it('should correctly detect strictly positive integers (> 0)', function () {
@@ -65,6 +69,7 @@ describe('Utility', function () {
       assert.ok(isStrictPositiveInteger(Number.MAX_SAFE_INTEGER))
 
     })
+
     it('should correctly return false', function () {
       for (let i = -100; i <= 0; i++) {
         assert.ok(!isStrictPositiveInteger(i))

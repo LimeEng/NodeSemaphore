@@ -1,18 +1,14 @@
 'use strict'
 
 const assert = require('assert').strict
+const testing = require('./test-utility.js')
 const Semaphore = require('../lib/semaphore.js')
 
 describe('Semaphore', function () {
   describe('constructor', function () {
     it('should throw error if count is not an integer > 0', function () {
       function shouldThrow(argument) {
-        try {
-          new Semaphore(argument)
-          return false
-        } catch (err) {
-          return true
-        }
+        return testing.shouldThrow(() => new Semaphore(argument))
       }
       for (let i = -100; i <= 0; i++) {
         assert.ok(shouldThrow(i))
@@ -25,6 +21,8 @@ describe('Semaphore', function () {
       assert.ok(shouldThrow(Number.NaN))
       assert.ok(shouldThrow(Number.POSITIVE_INFINITY))
       assert.ok(shouldThrow(Number.NEGATIVE_INFINITY))
+      assert.ok(shouldThrow(Number.MAX_SAFE_INTEGER + 1))
+      assert.ok(shouldThrow(Number.MIN_SAFE_INTEGER))
       assert.ok(shouldThrow([]))
       assert.ok(shouldThrow([1]))
       assert.ok(shouldThrow([1, 2, 3]))
@@ -32,14 +30,10 @@ describe('Semaphore', function () {
       assert.ok(shouldThrow({ prop: 'Hello there!' }))
       assert.ok(shouldThrow({ 1: 2 }))
     })
+
     it('should not throw an error if count is an integer > 0', function () {
       function shouldNotThrow(argument) {
-        try {
-          new Semaphore(argument)
-          return true
-        } catch (err) {
-          return false
-        }
+        return testing.shouldNotThrow(() => new Semaphore(argument))
       }
       for (let i = 1; i <= 100; i++) {
         assert.ok(shouldNotThrow(i))
@@ -47,6 +41,7 @@ describe('Semaphore', function () {
       assert.ok(shouldNotThrow(Number.MAX_SAFE_INTEGER))
     })
   })
+
   describe('.lock(thunk)', function () {
     it('should limit concurrent actions', async function () {
       const sem = new Semaphore(2)
@@ -60,7 +55,7 @@ describe('Semaphore', function () {
         // and then this function is registered as "running"
         assert(running <= 1)
         running++
-        await wait(10)
+        await testing.wait(10)
         // At most two functions could be running right now
         assert(running <= 2)
         running--
@@ -68,32 +63,34 @@ describe('Semaphore', function () {
         finished++
       }
 
-      const runningTasks = array(numberOfTasks).map(i => sem.lock(() => task()))
+      const runningTasks = testing.zeroTo(numberOfTasks).map(i => sem.lock(() => task()))
 
       await Promise.all(runningTasks)
-      assert.equal(finished, numberOfTasks)
+      assert.deepStrictEqual(finished, numberOfTasks)
     })
 
     it('should throw exception when task throws', async function () {
       const sem = new Semaphore(2)
 
       const task = async (shouldThrow) => {
-        await wait(10)
+        await testing.wait(10)
         if (shouldThrow) {
           throw new Error('Boom!')
         }
       }
 
-      const r1 = sem.lock(() => task(true))
-      const r2 = sem.lock(() => task(false))
-      const r3 = sem.lock(() => task(true))
+      let r1 = sem.lock(() => task(true))
+      let r2 = sem.lock(() => task(false))
+      let r3 = sem.lock(() => task(true))
 
-      r1.then(() => assert.fail())
+      r1 = r1.then(() => assert.fail())
         .catch(() => {/* Success!*/ })
-      r2.then(() => {/* Success!*/ })
+      r2 = r2.then(() => {/* Success!*/ })
         .catch(() => assert.fail())
-      r3.then(() => assert.fail())
+      r3 = r3.then(() => assert.fail())
         .catch(() => {/* Success!*/ })
+
+      await Promise.all([r1, r2, r3])
     })
 
     it('should return value from thunk', async function () {
@@ -102,43 +99,30 @@ describe('Semaphore', function () {
       const testValue = 'Hello World!'
 
       const task = async () => {
-        await wait(10)
+        await testing.wait(10)
         return testValue
       }
 
-      const runningTasks = array(5).map(i => sem.lock(() => task()))
+      const runningTasks = testing.zeroTo(5).map(i => sem.lock(() => task()))
       const results = await Promise.all(runningTasks)
       const result = results.every(item => item === testValue)
       assert(result)
     })
 
     it('should throw error with non-function arguments', async function () {
-      async function shouldThrow(semaphore, argument) {
-        try {
-          await semaphore.lock(argument)
-          return false
-        } catch (err) {
-          return true
-        }
-      }
       const sem = new Semaphore(2)
 
-      assert.ok(shouldThrow(sem, 'Hello World!'))
-      assert.ok(shouldThrow(sem, 10))
-      assert.ok(shouldThrow(sem, 0))
-      assert.ok(shouldThrow(sem, []))
-      assert.ok(shouldThrow(sem, [1, 2, 3]))
-      assert.ok(shouldThrow(sem, {}))
-      assert.ok(shouldThrow(sem, { prop: 'Hello there!' }))
-      assert.ok(sem.lock(() => 1 + 1))
+      function shouldThrow(argument) {
+        return testing.shouldThrowAsync(() => sem.lock(argument))
+      }
+
+      assert.ok(shouldThrow('Hello World!'))
+      assert.ok(shouldThrow(10))
+      assert.ok(shouldThrow(0))
+      assert.ok(shouldThrow([]))
+      assert.ok(shouldThrow([1, 2, 3]))
+      assert.ok(shouldThrow({}))
+      assert.ok(shouldThrow({ prop: 'Hello there!' }))
     })
   })
 })
-
-function array(bound) {
-  return [...Array(bound).keys()]
-}
-
-function wait(delay) {
-  return new Promise((resolve, reject) => setTimeout(resolve, delay))
-}
