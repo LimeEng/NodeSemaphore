@@ -1,6 +1,6 @@
 {
   "name": "@limeeng/semaphore",
-  "version": "0.5.10",
+  "version": "0.5.11",
   "description": "Semaphores, with promises. Limit access to resources in a safe and easy manner",
   "main": "index.js",
   "repository": {
@@ -22,6 +22,8 @@
   "license": "MIT",
   "devDependencies": {
     "benchmark": "^2.1.4",
+    "cli-table3": "^0.5.1",
+    "colors": "^1.3.2",
     "mocha": "^5.2.0"
   }
 }
