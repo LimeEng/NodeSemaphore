@@ -9,7 +9,7 @@ runAllBenchmarks()
 
 async function runAllBenchmarks() {
   printPlatform()
-  const bounds = [10, 100, 1000, 10000, 100000, 1000000, 5000000, 10000000]
+  const bounds = [10, 100, 1000, 10000]
   const benchmarks = []
   for (const bound of bounds) {
     const result = await runBasicLockTest(bound)
