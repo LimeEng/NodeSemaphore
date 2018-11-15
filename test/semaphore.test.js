@@ -130,23 +130,47 @@ describe('Semaphore', function () {
     it('should resolve when queue is empty', async function () {
       const sem = new Semaphore(2)
 
-      function task() {
-        return testing.wait(10)
-          .then(() => 'From task')
+      async function task() {
+        await testing.wait(10)
+        return 'From task'
       }
 
       const runningTasks = testing.zeroTo(20).map(() => sem.lock(() => task()))
       const onEmptyPromise = sem.onEmpty()
 
       const result = await Promise.race([Promise.all(runningTasks), onEmptyPromise])
-      console.log(result)
       assert.deepStrictEqual(result, 'From task')
 
-      await onEmptyPromise
+      return onEmptyPromise
     })
 
-    it.skip('should not reject if all promises in the queue reject', async function () {
+    it('should not reject if all promises in the queue reject', async function () {
       const sem = new Semaphore(2)
+
+      async function task() {
+        await testing.wait(10)
+        throw new Error('From task')
+      }
+
+      async function waitThenReject(promises) {
+        await Promise.all(promises.map(promise => promise.catch(e => e)))
+        console.log('Hello there!')
+        return Promise.reject('All tasks rejected!')
+      }
+
+      const runningTasks = testing.zeroTo(20).map(() => sem.lock(() => task()))
+      const onEmptyPromise = sem.onEmpty()
+
+      const raced = Promise.race([waitThenReject(runningTasks), onEmptyPromise])
+        .then(() => {
+          // Promise did not reject => onEmptyPromise finished prematurely
+          return Promise.reject()
+        }, () => {
+          // Promise did reject => onEmptyPromise did not finish prematurely
+          return Promise.resolve
+        })
+
+      return Promise.all([raced, onEmptyPromise])
     })
   })
 })
