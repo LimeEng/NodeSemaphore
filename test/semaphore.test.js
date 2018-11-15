@@ -127,8 +127,22 @@ describe('Semaphore', function () {
   })
 
   describe('.onEmpty()', function () {
-    it.skip('should resolve when queue is empty', async function () {
+    it('should resolve when queue is empty', async function () {
       const sem = new Semaphore(2)
+
+      function task() {
+        return testing.wait(10)
+          .then(() => 'From task')
+      }
+
+      const runningTasks = testing.zeroTo(20).map(() => sem.lock(() => task()))
+      const onEmptyPromise = sem.onEmpty()
+
+      const result = await Promise.race([Promise.all(runningTasks), onEmptyPromise])
+      console.log(result)
+      assert.deepStrictEqual(result, 'From task')
+
+      await onEmptyPromise
     })
 
     it.skip('should not reject if all promises in the queue reject', async function () {
