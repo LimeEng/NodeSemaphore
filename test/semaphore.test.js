@@ -125,4 +125,14 @@ describe('Semaphore', function () {
       assert.ok(shouldThrow({ prop: 'Hello there!' }))
     })
   })
+
+  describe('.onEmpty()', function () {
+    it.skip('should resolve when queue is empty', async function () {
+      const sem = new Semaphore(2)
+    })
+
+    it.skip('should not reject if all promises in the queue reject', async function () {
+      const sem = new Semaphore(2)
+    })
+  })
 })
