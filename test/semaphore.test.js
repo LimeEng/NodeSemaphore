@@ -172,5 +172,13 @@ describe('Semaphore', function () {
 
       return Promise.all([raced, onEmptyPromise])
     })
+
+    it('should not limit concurrent execution', async function () {
+      const sem = new Semaphore(2)
+    })
+
+    it('should not prevent more promises to be added while active', async function () {
+      const sem = new Semaphore(2)
+    })
   })
 })
