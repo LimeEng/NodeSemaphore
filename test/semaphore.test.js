@@ -174,11 +174,41 @@ describe('Semaphore', function () {
     })
 
     it('should not limit concurrent execution', async function () {
-      const sem = new Semaphore(2)
+      // If the onEmpty promise would limit execution, a semaphore with a count 
+      // of one would not allow other promises to execute at the same time
+      const sem = new Semaphore(1)
+
+      async function task() {
+        await testing.wait(10)
+        return 'From task'
+      }
+
+      const runningTasks1 = testing.zeroTo(20).map(() => sem.lock(() => task()))
+      const onEmptyPromise = sem.onEmpty()
+      const runningTasks2 = testing.zeroTo(20).map(() => sem.lock(() => task()))
+
+      const result = await Promise.race([Promise.all(runningTasks1.concat(runningTasks2)), onEmptyPromise])
+      assert.deepStrictEqual(result, 'From task')
+
+      return onEmptyPromise
     })
 
     it('should not prevent more promises to be added while active', async function () {
       const sem = new Semaphore(2)
+
+      async function task() {
+        await testing.wait(10)
+        return 'From task'
+      }
+
+      const runningTasks1 = testing.zeroTo(20).map(() => sem.lock(() => task()))
+      const onEmptyPromise = sem.onEmpty()
+      const runningTasks2 = testing.zeroTo(20).map(() => sem.lock(() => task()))
+
+      const result = await Promise.race([Promise.all(runningTasks1.concat(runningTasks2)), onEmptyPromise])
+      assert.deepStrictEqual(result, 'From task')
+
+      return onEmptyPromise
     })
   })
 })
