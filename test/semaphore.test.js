@@ -139,7 +139,12 @@ describe('Semaphore', function () {
       const onEmptyPromise = sem.onEmpty()
 
       const result = await Promise.race([Promise.all(runningTasks), onEmptyPromise])
-      assert.deepStrictEqual(result, 'From task')
+      if (Array.isArray(result)) {
+        const passed = result.every(item => item === 'From task')
+        assert(passed)
+      } else {
+        assert.fail()
+      }
 
       return onEmptyPromise
     })
@@ -154,7 +159,6 @@ describe('Semaphore', function () {
 
       async function waitThenReject(promises) {
         await Promise.all(promises.map(promise => promise.catch(e => e)))
-        console.log('Hello there!')
         return Promise.reject('All tasks rejected!')
       }
 
@@ -188,7 +192,12 @@ describe('Semaphore', function () {
       const runningTasks2 = testing.zeroTo(20).map(() => sem.lock(() => task()))
 
       const result = await Promise.race([Promise.all(runningTasks1.concat(runningTasks2)), onEmptyPromise])
-      assert.deepStrictEqual(result, 'From task')
+      if (Array.isArray(result)) {
+        const passed = result.every(item => item === 'From task')
+        assert(passed)
+      } else {
+        assert.fail()
+      }
 
       return onEmptyPromise
     })
@@ -206,9 +215,19 @@ describe('Semaphore', function () {
       const runningTasks2 = testing.zeroTo(20).map(() => sem.lock(() => task()))
 
       const result = await Promise.race([Promise.all(runningTasks1.concat(runningTasks2)), onEmptyPromise])
-      assert.deepStrictEqual(result, 'From task')
+      if (Array.isArray(result)) {
+        const passed = result.every(item => item === 'From task')
+        assert(passed)
+      } else {
+        assert.fail()
+      }
 
       return onEmptyPromise
+    })
+
+    it('should resolve immediately if no other tasks have been added', async function () {
+      const sem = new Semaphore(2)
+      return sem.onEmpty()
     })
   })
 })
