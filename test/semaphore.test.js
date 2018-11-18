@@ -126,7 +126,7 @@ describe('Semaphore', function () {
     })
   })
 
-  describe('.onEmpty()', function () {
+  describe('.onIdle()', function () {
     it('should resolve when queue is empty', async function () {
       const sem = new Semaphore(2)
 
@@ -138,9 +138,9 @@ describe('Semaphore', function () {
       const runningTasks = testing.zeroTo(5).map(() => sem.lock(() => task()))
       // TODO: Why does the addition of then() actually work?
       // Something with the next loop of the event loop? Figure out before merge.
-      const onEmptyPromise = sem.onEmpty().then()
+      const onIdlePromise = sem.onIdle().then()
 
-      const result = await Promise.race([Promise.all(runningTasks), onEmptyPromise])
+      const result = await Promise.race([Promise.all(runningTasks), onIdlePromise])
       if (Array.isArray(result)) {
         assert(result.length === 5)
         const passed = result.every(item => item === 'From task')
@@ -149,7 +149,7 @@ describe('Semaphore', function () {
         assert.fail()
       }
 
-      return onEmptyPromise
+      return onIdlePromise
     })
 
     it('should not reject even if all promises in the queue reject', async function () {
@@ -162,11 +162,11 @@ describe('Semaphore', function () {
 
       const runningTasks = testing.zeroTo(5).map(() => sem.lock(() => task()).catch(e => e))
 
-      return Promise.all([runningTasks, sem.onEmpty()])
+      return Promise.all([runningTasks, sem.onIdle()])
     })
 
     it('should not limit concurrent execution', async function () {
-      // If the onEmpty promise would limit execution, a semaphore with a count 
+      // If the onIdle promise would limit execution, a semaphore with a count 
       // of one would not allow other promises to execute at the same time
       const sem = new Semaphore(1)
 
@@ -178,10 +178,10 @@ describe('Semaphore', function () {
       const runningTasks1 = testing.zeroTo(5).map(() => sem.lock(() => task()))
       // TODO: Why does the addition of then() actually work?
       // Something with the next loop of the event loop? Figure out before merge.
-      const onEmptyPromise = sem.onEmpty().then()
+      const onIdlePromise = sem.onIdle().then()
       const runningTasks2 = testing.zeroTo(5).map(() => sem.lock(() => task()))
 
-      const result = await Promise.race([Promise.all(runningTasks1.concat(runningTasks2)), onEmptyPromise])
+      const result = await Promise.race([Promise.all(runningTasks1.concat(runningTasks2)), onIdlePromise])
       if (Array.isArray(result)) {
         assert(result.length === 10)
         const passed = result.every(item => item === 'From task')
@@ -190,7 +190,7 @@ describe('Semaphore', function () {
         assert.fail()
       }
 
-      return onEmptyPromise
+      return onIdlePromise
     })
 
     it('should not prevent more promises to be added while active', async function () {
@@ -204,10 +204,10 @@ describe('Semaphore', function () {
       const runningTasks1 = testing.zeroTo(5).map(() => sem.lock(() => task()))
       // TODO: Why does the addition of then() actually work?
       // Something with the next loop of the event loop? Figure out before merge.
-      const onEmptyPromise = sem.onEmpty().then()
+      const onIdlePromise = sem.onIdle().then()
       const runningTasks2 = testing.zeroTo(5).map(() => sem.lock(() => task()))
 
-      const result = await Promise.race([Promise.all(runningTasks1.concat(runningTasks2)), onEmptyPromise])
+      const result = await Promise.race([Promise.all(runningTasks1.concat(runningTasks2)), onIdlePromise])
       if (Array.isArray(result)) {
         assert(result.length === 10)
         const passed = result.every(item => item === 'From task')
@@ -216,12 +216,12 @@ describe('Semaphore', function () {
         assert.fail()
       }
 
-      return onEmptyPromise
+      return onIdlePromise
     })
 
     it('should resolve immediately if no other tasks have been added', async function () {
       const sem = new Semaphore(2)
-      return sem.onEmpty()
+      return sem.onIdle()
     })
   })
 })
