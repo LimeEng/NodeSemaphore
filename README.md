@@ -43,6 +43,22 @@ function sharedResource() {
 }
 ```
 
+### semaphore.onIdle()
+
+Returns a promise that resolves when all tasks submitted to the semaphore has completed. Can be called multiple times and it is possible to add more tasks after a call to this function.
+
+```js
+const Semaphore = require('@limeeng/semaphore')
+
+const sem = new Semaphore(2)
+
+sem.lock(task1)
+sem.lock(task2)
+sem.lock(task3)
+
+sem.onIdle().then(() => console.log('Done!'))
+```
+
 ## Examples
 
 This will create a version of `got` with concurrency set to 16. That is, no more than 16 requests will be in flight at any given time.
