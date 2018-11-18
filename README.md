@@ -4,11 +4,18 @@
 # Node Semaphore
 
 What is a semaphore? A great explanation is available at [Wikipedia](https://en.wikipedia.org/wiki/Semaphore_(programming)).
-It is basically a simple way to control access to resources in concurrent systems. One might think that there is no need for semaphores in JavaScript since it is single-threaded by nature, but that would be wrong. Race conditions can still manifest and there are several legitimate reasons for wanting to throttle concurrency with asynchronous actions.
+It is basically a simple way to control access to resources in concurrent systems. One might think that there is no need for semaphores in JavaScript since it is single-threaded by nature, but in some cases it is absolutely necessary. Race conditions can still manifest and there are several legitimate reasons for wanting to throttle concurrency when working with asynchronous systems.
 
+- [Installation](#install)
 - [Sample Code](#sample-code)
   - [API](#api)
   - [Examples](#examples)
+
+# Install
+
+```
+npm install --save @limeeng/semaphore
+```
 
 # Sample Code
 
