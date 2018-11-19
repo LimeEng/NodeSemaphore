@@ -125,4 +125,97 @@ describe('Semaphore', function () {
       assert.ok(shouldThrow({ prop: 'Hello there!' }))
     })
   })
+
+  describe('.onIdle()', function () {
+    it('should resolve when queue is empty', async function () {
+      const sem = new Semaphore(2)
+
+      async function task() {
+        await testing.wait(10)
+        return 'From task'
+      }
+
+      const runningTasks = testing.zeroTo(5).map(() => sem.lock(() => task()))
+      const onIdlePromise = sem.onIdle().then()
+
+      const result = await Promise.race([Promise.all(runningTasks), onIdlePromise])
+      if (Array.isArray(result)) {
+        assert(result.length === 5)
+        const passed = result.every(item => item === 'From task')
+        assert(passed)
+      } else {
+        assert.fail()
+      }
+
+      return onIdlePromise
+    })
+
+    it('should not reject even if all promises in the queue reject', async function () {
+      const sem = new Semaphore(2)
+
+      async function task() {
+        await testing.wait(10)
+        throw new Error('From task')
+      }
+
+      const runningTasks = testing.zeroTo(5).map(() => sem.lock(() => task()).catch(e => e))
+
+      return Promise.all([runningTasks, sem.onIdle()])
+    })
+
+    it('should not limit concurrent execution', async function () {
+      // If the onIdle promise would limit execution, a semaphore with a count 
+      // of one would not allow other promises to execute at the same time
+      const sem = new Semaphore(1)
+
+      async function task() {
+        await testing.wait(10)
+        return 'From task'
+      }
+
+      const runningTasks1 = testing.zeroTo(5).map(() => sem.lock(() => task()))
+      const onIdlePromise = sem.onIdle().then()
+      const runningTasks2 = testing.zeroTo(5).map(() => sem.lock(() => task()))
+
+      const result = await Promise.race([Promise.all(runningTasks1.concat(runningTasks2)), onIdlePromise])
+      if (Array.isArray(result)) {
+        assert(result.length === 10)
+        const passed = result.every(item => item === 'From task')
+        assert(passed)
+      } else {
+        assert.fail()
+      }
+
+      return onIdlePromise
+    })
+
+    it('should not prevent more promises to be added while active', async function () {
+      const sem = new Semaphore(2)
+
+      async function task() {
+        await testing.wait(10)
+        return 'From task'
+      }
+
+      const runningTasks1 = testing.zeroTo(5).map(() => sem.lock(() => task()))
+      const onIdlePromise = sem.onIdle().then()
+      const runningTasks2 = testing.zeroTo(5).map(() => sem.lock(() => task()))
+
+      const result = await Promise.race([Promise.all(runningTasks1.concat(runningTasks2)), onIdlePromise])
+      if (Array.isArray(result)) {
+        assert(result.length === 10)
+        const passed = result.every(item => item === 'From task')
+        assert(passed)
+      } else {
+        assert.fail()
+      }
+
+      return onIdlePromise
+    })
+
+    it('should resolve immediately if no other tasks have been added', async function () {
+      const sem = new Semaphore(2)
+      return sem.onIdle()
+    })
+  })
 })
