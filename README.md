@@ -52,11 +52,13 @@ const Semaphore = require('@limeeng/semaphore')
 
 const sem = new Semaphore(2)
 
-sem.lock(task1)
-sem.lock(task2)
-sem.lock(task3)
+sem.lock(() => console.log('#1'))
+sem.lock(() => console.log('#2'))
 
-sem.onIdle().then(() => console.log('Done!'))
+sem.onIdle().then(() => console.log('Done! #5'))
+
+sem.lock(() => console.log('#3'))
+sem.lock(() => console.log('#4'))
 ```
 
 ## Examples

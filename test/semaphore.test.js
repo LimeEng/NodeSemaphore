@@ -136,8 +136,6 @@ describe('Semaphore', function () {
       }
 
       const runningTasks = testing.zeroTo(5).map(() => sem.lock(() => task()))
-      // TODO: Why does the addition of then() actually work?
-      // Something with the next loop of the event loop? Figure out before merge.
       const onIdlePromise = sem.onIdle().then()
 
       const result = await Promise.race([Promise.all(runningTasks), onIdlePromise])
@@ -176,8 +174,6 @@ describe('Semaphore', function () {
       }
 
       const runningTasks1 = testing.zeroTo(5).map(() => sem.lock(() => task()))
-      // TODO: Why does the addition of then() actually work?
-      // Something with the next loop of the event loop? Figure out before merge.
       const onIdlePromise = sem.onIdle().then()
       const runningTasks2 = testing.zeroTo(5).map(() => sem.lock(() => task()))
 
@@ -202,8 +198,6 @@ describe('Semaphore', function () {
       }
 
       const runningTasks1 = testing.zeroTo(5).map(() => sem.lock(() => task()))
-      // TODO: Why does the addition of then() actually work?
-      // Something with the next loop of the event loop? Figure out before merge.
       const onIdlePromise = sem.onIdle().then()
       const runningTasks2 = testing.zeroTo(5).map(() => sem.lock(() => task()))
 
