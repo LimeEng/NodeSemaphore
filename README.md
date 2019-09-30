@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/LimeEng/NodeSemaphore.svg?branch=master)](https://travis-ci.com/LimeEng/NodeSemaphore)
+![](https://github.com/LimeEng/NodeSemaphore/workflows/Node%20CI/badge.svg)
 [![npm (scoped)](https://img.shields.io/npm/v/@limeeng/semaphore.svg)](https://www.npmjs.com/package/@limeeng/semaphore)
 
 # Node Semaphore
