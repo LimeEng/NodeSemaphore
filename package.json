@@ -1,6 +1,6 @@
 {
   "name": "@limeeng/semaphore",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Semaphores, with promises. Limit access to resources in a safe and easy manner",
   "main": "index.js",
   "repository": {
@@ -21,7 +21,7 @@
   "author": "Emil Englesson",
   "license": "MIT",
   "dependencies": {
-    "@limeeng/fifo-queue": "^0.3.1"
+    "@limeeng/fifo-queue": "^0.3.2"
   },
   "devDependencies": {
     "benchmark": "^2.1.4",
