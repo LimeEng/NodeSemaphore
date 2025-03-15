@@ -1,10 +1,9 @@
-![](https://github.com/LimeEng/NodeSemaphore/workflows/Node%20CI/badge.svg)
+![](https://github.com/LimeEng/NodeSemaphore/actions/workflows/ci.yaml/badge.svg)
 [![npm (scoped)](https://img.shields.io/npm/v/@limeeng/semaphore.svg)](https://www.npmjs.com/package/@limeeng/semaphore)
 
 # Node Semaphore
 
-What is a semaphore? A great explanation is available at [Wikipedia](https://en.wikipedia.org/wiki/Semaphore_(programming)).
-It is basically a simple way to control access to resources in concurrent systems. One might think that there is no need for semaphores in JavaScript since it is single-threaded by nature, but in some cases it is absolutely necessary. Race conditions can still manifest and there are several legitimate reasons for wanting to throttle concurrency when working with asynchronous systems.
+[Semaphores](https://en.wikipedia.org/wiki/Semaphore_(programming)) can be used to control access to resources in concurrent systems. While JavaScript is inherently single-threaded, semaphores can still help manage asynchronous operations and prevent issues like resource contention.
 
 - [Installation](#install)
 - [API](#api)
